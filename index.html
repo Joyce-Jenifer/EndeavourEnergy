@@ -13,17 +13,20 @@
 <script></script>
 <noscript></noscript><div id=goog-gt-tt class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style='display:none;border-radius:12px;margin:0 0 0-23px;padding:0;font-family:"Google Sans",Arial,sans-serif' data-id></div>
 <div class=VIpgJd-ZVi9od-aZ2wEe-wOHMyf><div class=VIpgJd-ZVi9od-aZ2wEe-OiiCO><svg xmlns=http://www.w3.org/2000/svg class=VIpgJd-ZVi9od-aZ2wEe width=96px height=96px viewBox="0 0 66 66"><circle class=VIpgJd-ZVi9od-aZ2wEe-Jt5cK fill=none stroke-width=6 stroke-linecap=round cx=33 cy=33 r=30></circle></svg></div></div><iframe id=_hjSafeContext_83261228 title=_hjSafeContext tabindex=-1 aria-hidden=true src style=display:none!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important></iframe><script></script><div style=display:none></div><script></script><script></script><script></script><script></script>
-<!-- Pega chat launcher: keep the embed at full viewport size so its panel can expand. -->
+<!-- Pega chat launcher: compact chat window with icon-only closed state. -->
 <style id="pega-chat-launcher-style">
-  /* Closed state: show only the enlarged launcher in the bottom-right corner. */
+  /* Compact Pega chat viewport, anchored at the bottom-right. */
   #pega-chat-launcher-clip {
     position: fixed !important;
-    inset: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
+    right: 16px !important;
+    bottom: 16px !important;
+    left: auto !important;
+    top: auto !important;
+    width: 420px !important;
+    height: 560px !important;
     overflow: visible !important;
-    clip-path: inset(calc(100% - 82px) 8px 8px calc(100% - 82px)) !important;
-    -webkit-clip-path: inset(calc(100% - 82px) 8px 8px calc(100% - 82px)) !important;
+    clip-path: inset(calc(100% - 82px) 0 0 calc(100% - 82px)) !important;
+    -webkit-clip-path: inset(calc(100% - 82px) 0 0 calc(100% - 82px)) !important;
     isolation: isolate !important;
     z-index: 2147483000 !important;
     border: 0 !important;
@@ -33,16 +36,16 @@
     pointer-events: none !important;
   }
 
-  /* Keep the Pega embed at its real size; do not constrain it to the icon crop. */
   #pega-chat-launcher-clip pega-embed {
     position: absolute !important;
     inset: 0 !important;
     display: block !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    min-width: 100vw !important;
-    min-height: 100vh !important;
-    max-width: none !important;
+    width: 420px !important;
+    height: 560px !important;
+    min-width: 420px !important;
+    min-height: 560px !important;
+    max-width: 420px !important;
+    max-height: 560px !important;
     border: 0 !important;
     padding: 0 !important;
     margin: 0 !important;
@@ -50,7 +53,7 @@
     pointer-events: auto !important;
   }
 
-  /* Clicking the launcher focuses the embedded frame. Reveal the full chat panel. */
+  /* Clicking opens the chat within this compact 420 x 560 viewport. */
   #pega-chat-launcher-clip:focus-within {
     clip-path: inset(0) !important;
     -webkit-clip-path: inset(0) !important;
@@ -59,8 +62,20 @@
 
   @media (max-width: 600px) {
     #pega-chat-launcher-clip {
-      clip-path: inset(calc(100% - 76px) 6px 6px calc(100% - 76px)) !important;
-      -webkit-clip-path: inset(calc(100% - 76px) 6px 6px calc(100% - 76px)) !important;
+      right: 10px !important;
+      bottom: 10px !important;
+      width: min(92vw, 380px) !important;
+      height: min(72vh, 520px) !important;
+      clip-path: inset(calc(100% - 76px) 0 0 calc(100% - 76px)) !important;
+      -webkit-clip-path: inset(calc(100% - 76px) 0 0 calc(100% - 76px)) !important;
+    }
+    #pega-chat-launcher-clip pega-embed {
+      width: min(92vw, 380px) !important;
+      height: min(72vh, 520px) !important;
+      min-width: min(92vw, 380px) !important;
+      min-height: min(72vh, 520px) !important;
+      max-width: min(92vw, 380px) !important;
+      max-height: min(72vh, 520px) !important;
     }
   }
 </style>
@@ -81,6 +96,6 @@
     userIdentifier="Joyce"
     password="cnVsZXM="
     clientId="16241540157377893402"
-    style="width:100%;height:100%">
+    style="width:420px;height:560px">
   </pega-embed>
 </div>
