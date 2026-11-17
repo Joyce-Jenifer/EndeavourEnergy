@@ -15,43 +15,53 @@
 <div class=VIpgJd-ZVi9od-aZ2wEe-wOHMyf><div class=VIpgJd-ZVi9od-aZ2wEe-OiiCO><svg xmlns=http://www.w3.org/2000/svg class=VIpgJd-ZVi9od-aZ2wEe width=96px height=96px viewBox="0 0 66 66"><circle class=VIpgJd-ZVi9od-aZ2wEe-Jt5cK fill=none stroke-width=6 stroke-linecap=round cx=33 cy=33 r=30></circle></svg></div></div><iframe id=_hjSafeContext_83261228 title=_hjSafeContext tabindex=-1 aria-hidden=true src style=display:none!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important></iframe><script></script><div style=display:none></div><script></script><script></script><script></script><script></script>
 <!-- Pega chat launcher: the full Pega page is clipped to its bottom-right corner. -->
 <style id="pega-chat-launcher-style">
+  /*
+    Crop the Pega viewport to the launcher only.
+    clip-path is intentional: it clips descendants that may use fixed positioning,
+    which overflow:hidden alone may not reliably contain.
+  */
   #pega-chat-launcher-clip {
-    position: fixed;
-    right: 8px;
-    bottom: 8px;
-    width: 56px;
-    height: 48px;
-    overflow: hidden;
-    z-index: 2147483000;
-    border: 0;
-    background: transparent;
-    pointer-events: auto;
+    position: fixed !important;
+    right: 12px !important;
+    bottom: 32px !important;
+    width: 48px !important;
+    height: 48px !important;
+    overflow: hidden !important;
+    clip-path: inset(0) !important;
+    contain: paint !important;
+    isolation: isolate !important;
+    z-index: 2147483000 !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    pointer-events: auto !important;
   }
   #pega-chat-launcher-clip pega-embed {
     position: absolute !important;
-    right: 0 !important;
-    bottom: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
     display: block !important;
     width: 100vw !important;
     height: 100vh !important;
-    max-width: none !important;
     min-width: 100vw !important;
+    max-width: none !important;
     border: 0 !important;
+    padding: 0 !important;
     margin: 0 !important;
   }
   @media (max-width: 600px) {
     #pega-chat-launcher-clip {
-      right: 8px;
-      bottom: 8px;
-      width: 56px;
-      height: 48px;
+      right: 10px !important;
+      bottom: 28px !important;
+      width: 48px !important;
+      height: 48px !important;
     }
   }
 </style>
 <div id="pega-chat-launcher-clip" aria-label="Customer support chat">
   <script src="https://omc-csfs-26.pegademo.com/prweb/PRRestService/c11nsvc/v1/pega-embed.js"></script>
   <pega-embed
-    container="true"
     id="theEmbed"
     action="openPage"
     pageID="pyHome"
