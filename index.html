@@ -17,10 +17,10 @@
 <style id="pega-chat-launcher-style">
   #pega-chat-launcher-clip {
     position: fixed;
-    right: 24px;
-    bottom: 24px;
-    width: 76px;
-    height: 76px;
+    right: 8px;
+    bottom: 8px;
+    width: 56px;
+    height: 48px;
     overflow: hidden;
     z-index: 2147483000;
     border: 0;
@@ -41,16 +41,17 @@
   }
   @media (max-width: 600px) {
     #pega-chat-launcher-clip {
-      right: 14px;
-      bottom: 14px;
-      width: 72px;
-      height: 72px;
+      right: 8px;
+      bottom: 8px;
+      width: 56px;
+      height: 48px;
     }
   }
 </style>
 <div id="pega-chat-launcher-clip" aria-label="Customer support chat">
   <script src="https://omc-csfs-26.pegademo.com/prweb/PRRestService/c11nsvc/v1/pega-embed.js"></script>
   <pega-embed
+    container="true"
     id="theEmbed"
     action="openPage"
     pageID="pyHome"
