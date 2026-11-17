@@ -13,23 +13,18 @@
 <script></script>
 <noscript></noscript><div id=goog-gt-tt class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style='display:none;border-radius:12px;margin:0 0 0-23px;padding:0;font-family:"Google Sans",Arial,sans-serif' data-id></div>
 <div class=VIpgJd-ZVi9od-aZ2wEe-wOHMyf><div class=VIpgJd-ZVi9od-aZ2wEe-OiiCO><svg xmlns=http://www.w3.org/2000/svg class=VIpgJd-ZVi9od-aZ2wEe width=96px height=96px viewBox="0 0 66 66"><circle class=VIpgJd-ZVi9od-aZ2wEe-Jt5cK fill=none stroke-width=6 stroke-linecap=round cx=33 cy=33 r=30></circle></svg></div></div><iframe id=_hjSafeContext_21106284 title=_hjSafeContext tabindex=-1 aria-hidden=true src style=display:none!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important data-uw-feature-css-bound=1></iframe><script></script><div style=display:none></div><script></script><script></script><script></script><script></script><script></script>
-<!-- ===== Pega Web Embed (AI Agent) - only the chat launcher is visible ===== -->
+<!-- ===== Pega Web Embed (AI Agent) - only the chat launcher + chat panel are visible ===== -->
 <style>
-  #pega-agent-dock{
-    /* tune these if the icon/panel sit slightly differently */
-    --pa-icon-size:96px;      /* visible square around the launcher icon */
-    --pa-panel-w:460px;       /* visible area when chat is open */
-    --pa-panel-h:760px;
-    position:fixed; inset:0; width:100vw; height:100vh;
-    z-index:2147483000; background:transparent; pointer-events:none;
-    clip-path:inset(calc(100% - var(--pa-icon-size)) 0 0 calc(100% - var(--pa-icon-size)) round 50% 0 0 0);
-    transition:clip-path .2s ease;
-  }
-  #pega-agent-dock.pa-open{
-    clip-path:inset(max(0px, calc(100% - var(--pa-panel-h))) 0 0 max(0px, calc(100% - var(--pa-panel-w))) round 12px 0 0 0);
-  }
-  #pega-agent-dock pega-embed{display:block; width:100%; height:100%; pointer-events:auto; background:transparent}
+  /* full-viewport layer above the site; everything inside is invisible (and click-through) unless marked */
+  #pega-agent-dock{position:fixed; inset:0; z-index:2147483000; background:transparent; pointer-events:none}
+  #pega-agent-dock pega-embed{display:block; width:100%; height:100%; visibility:hidden; pointer-events:auto}
+  #pega-agent-dock [data-pa-show]{visibility:visible !important}
 </style>
+<script>
+  /* make Pega's shadow DOM reachable so we can pick out the launcher and chat panel */
+  (function(){var o=Element.prototype.attachShadow;
+    Element.prototype.attachShadow=function(init){return o.call(this,Object.assign({},init,{mode:'open'}));};})();
+</script>
 <div id="pega-agent-dock">
 <script src='https://omc-csfs-26.pegademo.com/prweb/PRRestService/c11nsvc/v1/pega-embed.js' ></script>
 <pega-embed id='theEmbed' action='openPage' pageID='pyHome' pageClass='OQ6JC0-Connecti-UIPages' themeID='ConnectionsPortal' casePage='full' assignmentHeader='false' appAlias='connections' pegaServerUrl='https://omc-csfs-26.pegademo.com/prweb/' autoReauth='true' authService='pega' userIdentifier='Joyce' password='cnVsZXM=' clientId='16241540157377893402' style='width:100%'>
@@ -37,13 +32,61 @@
 </div>
 <script>
 (function(){
-  var dock=document.getElementById('pega-agent-dock');
-  function px(v){return parseFloat(getComputedStyle(dock).getPropertyValue(v))||0;}
-  // Clicking the launcher area (bottom-right corner) toggles the larger visible region.
-  dock.addEventListener('click',function(e){
-    var s=px('--pa-icon-size');
-    if(e.clientX>=innerWidth-s && e.clientY>=innerHeight-s){ dock.classList.toggle('pa-open'); }
-  },true);
-  document.addEventListener('keydown',function(e){ if(e.key==='Escape') dock.classList.remove('pa-open'); });
+  var host=document.getElementById('theEmbed');
+  var CSS='[data-pa-show]{visibility:visible !important}';
+  var POPUP='[role=tooltip],[role=menu],[role=listbox],[role=alertdialog]';
+  var ANCHOR_TEXT=/how can i assist|verify ai-generated|write a message|energy agent/i;
+
+  function roots(){ // light DOM of the embed + every open shadow root below it
+    var out=[host], stack=[host];
+    while(stack.length){
+      var r=stack.pop(), els=r.querySelectorAll('*');
+      if(r.shadowRoot){ out.push(r.shadowRoot); stack.push(r.shadowRoot); }
+      for(var i=0;i<els.length;i++) if(els[i].shadowRoot){ out.push(els[i].shadowRoot); stack.push(els[i].shadowRoot); }
+    }
+    return out;
+  }
+  function parentOf(el){ return el.parentElement || (el.getRootNode().host||null); }
+  function show(el){ if(el && !el.hasAttribute('data-pa-show')) el.setAttribute('data-pa-show',''); }
+
+  function scan(){
+    var W=innerWidth, H=innerHeight, keep=new Set();
+    roots().forEach(function(root){
+      if(root instanceof ShadowRoot && !root.__paStyle){
+        var st=document.createElement('style'); st.textContent=CSS; root.appendChild(st); root.__paStyle=1; watch(root);
+      }
+      // 1) launcher: small button pinned to the bottom-right corner
+      root.querySelectorAll('button,[role=button]').forEach(function(b){
+        var r=b.getBoundingClientRect();
+        if(r.width>0 && r.width<130 && r.height<130 && r.right>W-160 && r.bottom>H-160) keep.add(b);
+      });
+      // 2) chat panel: climb from its message box / greeting up to the outermost narrow container
+      root.querySelectorAll('textarea,input,[contenteditable],h1,h2,h3,p,span,div').forEach(function(el){
+        var ph=(el.getAttribute('placeholder')||'')+' '+(el.getAttribute('aria-label')||'');
+        var own=el.children.length===0 ? el.textContent : '';
+        if(!ANCHOR_TEXT.test(ph) && !ANCHOR_TEXT.test(own)) return;
+        var best=null, cur=el;
+        while(cur && cur!==host){
+          var r=cur.getBoundingClientRect();
+          if(r.width>0 && r.width<=Math.min(720,W*0.6)) best=cur; else if(best) break;
+          cur=parentOf(cur);
+        }
+        if(best) keep.add(best);
+      });
+      // 3) tooltips / dropdown menus opened from the chat
+      root.querySelectorAll(POPUP).forEach(function(el){ keep.add(el); });
+    });
+    // un-mark anything no longer relevant, mark the current set
+    roots().forEach(function(root){
+      root.querySelectorAll('[data-pa-show]').forEach(function(el){ if(!keep.has(el)) el.removeAttribute('data-pa-show'); });
+    });
+    keep.forEach(show);
+  }
+
+  var pending=false;
+  function schedule(){ if(!pending){ pending=true; requestAnimationFrame(function(){ pending=false; scan(); }); } }
+  function watch(node){ new MutationObserver(schedule).observe(node,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden','aria-expanded']}); }
+  watch(host); addEventListener('resize',schedule); setInterval(scan,1000); schedule();
+  window.paScan=scan; // debug helper: run paScan() in the console
 })();
 </script>
