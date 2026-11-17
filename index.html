@@ -13,8 +13,8 @@
 <script></script>
 <noscript></noscript><div id=goog-gt-tt class="VIpgJd-yAWNEb-L7lbkb skiptranslate" style='display:none;border-radius:12px;margin:0 0 0-23px;padding:0;font-family:"Google Sans",Arial,sans-serif' data-id></div>
 <div class=VIpgJd-ZVi9od-aZ2wEe-wOHMyf><div class=VIpgJd-ZVi9od-aZ2wEe-OiiCO><svg xmlns=http://www.w3.org/2000/svg class=VIpgJd-ZVi9od-aZ2wEe width=96px height=96px viewBox="0 0 66 66"><circle class=VIpgJd-ZVi9od-aZ2wEe-Jt5cK fill=none stroke-width=6 stroke-linecap=round cx=33 cy=33 r=30></circle></svg></div></div><iframe id=_hjSafeContext_83261228 title=_hjSafeContext tabindex=-1 aria-hidden=true src style=display:none!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important></iframe><script></script><div style=display:none></div><script></script><script></script><script></script><script></script>
-<!-- Pega chat launcher: keep the Pega page full-size, but reveal only the launcher
-     when closed and only the right-side chat panel when opened. -->
+
+<!-- Pega chat launcher: closed = launcher only; open = chat panel only. -->
 <style id="pega-chat-launcher-style">
   #pega-chat-launcher-clip {
     position: fixed !important;
@@ -26,9 +26,9 @@
     -webkit-clip-path: inset(calc(100% - 104px) 0 0 calc(100% - 104px)) !important;
     isolation: isolate !important;
     z-index: 2147483000 !important;
-    border: 0 !important;
-    padding: 0 !important;
     margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
     background: transparent !important;
     pointer-events: none !important;
   }
@@ -43,18 +43,22 @@
     min-height: 100vh !important;
     max-width: none !important;
     max-height: none !important;
-    border: 0 !important;
-    padding: 0 !important;
     margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
     transform: none !important;
     pointer-events: auto !important;
   }
 
-  /* On opening, show the chat panel on the right only.
-     The Pega home page to its left stays clipped out. */
+  /*
+   * IMPORTANT:
+   * Do not reveal the whole right-hand strip of pyHome.
+   * The chat panel in the current Pega layout sits about 60px from the top,
+   * and ends about 40px above the bottom. Clip tightly around that panel.
+   */
   #pega-chat-launcher-clip:focus-within {
-    clip-path: inset(0 0 0 calc(100% - 470px)) !important;
-    -webkit-clip-path: inset(0 0 0 calc(100% - 470px)) !important;
+    clip-path: inset(60px 125px 40px calc(100% - 500px)) !important;
+    -webkit-clip-path: inset(60px 125px 40px calc(100% - 500px)) !important;
     pointer-events: auto !important;
   }
 
@@ -64,8 +68,8 @@
       -webkit-clip-path: inset(calc(100% - 88px) 0 0 calc(100% - 88px)) !important;
     }
     #pega-chat-launcher-clip:focus-within {
-      clip-path: inset(0 0 0 calc(100% - min(94vw, 430px))) !important;
-      -webkit-clip-path: inset(0 0 0 calc(100% - min(94vw, 430px))) !important;
+      clip-path: inset(48px 8px 24px calc(100% - min(94vw, 430px))) !important;
+      -webkit-clip-path: inset(48px 8px 24px calc(100% - min(94vw, 430px))) !important;
     }
   }
 </style>
