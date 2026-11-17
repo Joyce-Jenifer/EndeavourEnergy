@@ -41,7 +41,9 @@
     /* bigger chat window, anchored just above the launcher */
     '[role=dialog]:has([data-testid=":gen-ai-coach:"]){width:380px !important;max-width:calc(100vw - 32px) !important;height:min(660px,calc(100vh - 96px)) !important;top:auto !important;left:auto !important;right:16px !important;bottom:74px !important;border-radius:12px !important;box-shadow:0 8px 32px rgba(0,0,0,.25) !important;overflow:hidden !important}',
     '[role=dialog] [data-testid=":fullscreen:"]:has([data-testid=":gen-ai-coach:"]),[data-testid=":gen-ai-coach:"]{height:100% !important;display:flex !important;flex-direction:column !important}',
-    '[data-testid=":gen-ai-coach:"] > div:last-child{flex:1 1 auto !important;height:auto !important;min-height:0 !important}'
+    '[data-testid=":gen-ai-coach:"] > div:last-child{flex:1 1 auto !important;height:auto !important;min-height:0 !important}',
+    /* larger text inside the chat window (1 = original, 1.15 = 15% bigger) */
+    '[data-testid=":gen-ai-coach:"]{zoom:1.15}'
   ].join('\n');
   var POPUP='[role=tooltip],[role=menu],[role=listbox],[role=alertdialog]';
   var ANCHOR_TEXT=/how can i assist|verify ai-generated|write a message|energy agent/i;
@@ -83,7 +85,11 @@
         if(best) keep.add(best);
       });
       // 3) tooltips / dropdown menus opened from the chat
-      root.querySelectorAll(POPUP).forEach(function(el){ keep.add(el); });
+      var chatOpen=!!root.querySelector('[data-testid=":gen-ai-coach:"]');
+      root.querySelectorAll(POPUP).forEach(function(el){
+        if(chatOpen && /^\s*chat with ai\s*$/i.test(el.textContent)) return; // launcher tooltip would overlap the open panel
+        keep.add(el);
+      });
     });
     // un-mark anything no longer relevant, mark the current set
     roots().forEach(function(root){
